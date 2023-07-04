@@ -21,20 +21,21 @@ runs:
         name: id_rsa
         known_hosts: ${{ inputs.known_hosts }}
         if_key_exists: ignore
-    
+
     - name: Install Node
       uses: actions/setup-node@v3
       with:
         node-version: '14.x'
-     
+
     - name: Fetch dependencies
       shell: bash
-      run: | 
-        npm install
-        npm ci 
+      run: npm ci
+
+    - name: Audit dependencies
+      shell: bash
+      run: npm audit --audit-level high
 
     - name: Execute unit tests
       shell: bash
       run: npm test
-      if: always()
 
