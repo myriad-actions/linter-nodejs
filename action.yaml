@@ -2,7 +2,7 @@ name: "Fetch dependencies across nodejs"
 description:  setup ssh-agent to use the private ssh-key to fetch private dependencies and execute units tests
 
 inputs:
- node-version:
+  node-version:
     required: true
     description: Node version to set up
   ssh-key:
@@ -47,4 +47,3 @@ runs:
       shell: bash
       run: npm test
       if: inputs.check-tests == 'true'
-
