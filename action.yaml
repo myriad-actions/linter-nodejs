@@ -2,30 +2,36 @@ name: "Fetch dependencies across nodejs"
 description:  setup ssh-agent to use the private ssh-key to fetch private dependencies and execute units tests
 
 inputs:
-  #  mode:
-  #    description: fetch mode prod or dev
-  ssh_key:
-    description: ssh private key
+ node-version:
     required: true
-  known_hosts:
-    description: example github.com
+    description: Node version to set up
+  ssh-key:
+    description: SSH key to use for the CI
     required: true
+  #################################################################
+  # Everything below this line is optional.
+  #################################################################
+  check-test:
+    description: "Run test"
+    default: 'true'
+    required: false
+  check-deps-audit:
+    description: "Run npm audit"
+    default: 'true'
+    required: false
 
 runs:
   using: "composite"
   steps:
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
       with:
-        key: ${{ inputs.ssh_key }}
-        name: id_rsa
-        known_hosts: ${{ inputs.known_hosts }}
-        if_key_exists: ignore
+        ssh-private-key: ${{ inputs.ssh-key }}
 
     - name: Install Node
       uses: actions/setup-node@v3
       with:
-        node-version: '14.x'
+        node-version: ${{ inputs.node-version }}
         cache: 'npm'
 
     - name: Fetch dependencies
@@ -35,8 +41,10 @@ runs:
     - name: Audit dependencies
       shell: bash
       run: npm audit --audit-level high
+      if: inputs.check-deps-audit == 'true'
 
     - name: Execute unit tests
       shell: bash
       run: npm test
+      if: inputs.check-tests == 'true'
 
