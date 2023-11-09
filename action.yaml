@@ -19,6 +19,10 @@ inputs:
     description: "Run npm audit"
     default: 'true'
     required: false
+  force-ci-check:
+    description: "force ci check"
+    default: 'false'
+    required: false
 
 runs:
   using: "composite"
@@ -36,8 +40,8 @@ runs:
 
     - name: Fetch dependencies
       shell: bash
-      run: npm ci
-
+      run: ${{ force-ci-check == false }} && npm ci || npm ci --force
+ 
     - name: Audit dependencies
       shell: bash
       run: npm audit --audit-level high
