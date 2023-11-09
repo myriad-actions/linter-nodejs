@@ -40,7 +40,7 @@ runs:
 
     - name: Fetch dependencies
       shell: bash
-      run: ${{ force-ci-check == false }} && npm ci || npm ci --force
+      run: ${{ inputs.force-ci-check == false }} && npm ci || npm ci --force
  
     - name: Audit dependencies
       shell: bash
